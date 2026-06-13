@@ -1,15 +1,12 @@
-package org.example.edi.tables;
+package org.example.edi.dto;
 
-public class OrderItem {
+public class OrderItemDto {
 
     private Long id;
     private int orderId;
     private String sku;
     private int quantity;
     private int price;
-
-    public OrderItem() {}
-
 
     public void setId(Long id) {
         this.id = id;

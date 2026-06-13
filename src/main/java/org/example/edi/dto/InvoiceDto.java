@@ -1,14 +1,12 @@
-package org.example.edi.tables;
+package org.example.edi.dto;
 
-public class Invoice {
-
+public class InvoiceDto {
     private Long id;
     private int invoiceNumber;
     private Long orderId;
     private int totalAmount;
     private String createdAt;
 
-    public Invoice() {}
 
     public void setId(Long id) {
         this.id = id;

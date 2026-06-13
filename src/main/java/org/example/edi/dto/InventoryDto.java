@@ -1,19 +1,10 @@
-package org.example.edi.tables;
+package org.example.edi.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "inventory")
-public class Inventory {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class InventoryDto {
     private Long id;
     private String sku;
     private int availableQuantity;
-    private int reservedQuantity;
-
-    public Inventory() {}
+    private int reserveQuantity;
 
     public void setId(Long id) {
         this.id = id;
@@ -27,8 +18,8 @@ public class Inventory {
         this.availableQuantity = availableQuantity;
     }
 
-    public void setReservedQuantity(int reservedQuantity) {
-        this.reservedQuantity = reservedQuantity;
+    public void setReserveQuantity(int reserveQuantity) {
+        this.reserveQuantity = reserveQuantity;
     }
 
     public Long getId() {
@@ -43,7 +34,7 @@ public class Inventory {
         return availableQuantity;
     }
 
-    public int getReservedQuantity() {
-        return reservedQuantity;
+    public int getReserveQuantity() {
+        return reserveQuantity;
     }
 }
