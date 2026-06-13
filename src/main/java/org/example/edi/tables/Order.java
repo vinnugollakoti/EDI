@@ -1,15 +1,24 @@
 package org.example.edi.tables;
 import org.example.edi.enums.Status;
+import jakarta.persistence.*;
 
+
+@Entity
+@Table(name = "orders")
 public class Order {
-    private Long id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String poNumber;
+
+    @Enumerated(EnumType.STRING)
     private Status status;
     private String createdAt;
 
     public Order() {}
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -25,7 +34,7 @@ public class Order {
         this.createdAt = createdAt;
     }
 
-    public Long getId() {
+    public int getId() {
         return this.id;
     }
 
