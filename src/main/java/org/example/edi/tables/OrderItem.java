@@ -1,9 +1,18 @@
 package org.example.edi.tables;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "order_items")
 public class OrderItem {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int orderId;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     private String sku;
     private int quantity;
     private int price;
@@ -15,8 +24,8 @@ public class OrderItem {
         this.id = id;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public void setSku(String sku) {
@@ -35,8 +44,8 @@ public class OrderItem {
         return id;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public Order getOrder() {
+        return order;
     }
 
     public String getSku() {
