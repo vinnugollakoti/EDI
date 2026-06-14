@@ -2,6 +2,9 @@ package org.example.edi.tables;
 import org.example.edi.enums.Status;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Entity
 @Table(name = "orders")
@@ -9,16 +12,22 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String poNumber;
 
     @Enumerated(EnumType.STRING)
     private Status status;
-    private String createdAt;
+    private LocalDateTime createdAt;
+
+    @OneToMany(
+            mappedBy = "order",
+            cascade = CascadeType.ALL
+    )
+    private List<OrderItem> items;
 
     public Order() {}
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -30,11 +39,15 @@ public class Order {
         this.status = status;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public int getId() {
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
+
+    public Long getId() {
         return this.id;
     }
 
@@ -46,7 +59,11 @@ public class Order {
         return this.status;
     }
 
-    public String getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return this.createdAt;
+    }
+
+    public List<OrderItem> getItems() {
+        return items;
     }
 }
