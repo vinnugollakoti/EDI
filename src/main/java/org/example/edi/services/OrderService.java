@@ -48,44 +48,63 @@ public class OrderService {
         return "Order Created Successfully!";
     }
 
-//    public List<Order> getAllOrders() {
-//        return orderRepository.findAll();
-//    }
-//
-//    public String cancelOrder(int id) {
-//        try {
-//            if (!orderRepository.existsById(id)) {
-//                return "Order not found";
-//            }
-//            orderRepository.deleteById(id);
-//            return "Order cancelled successfully!";
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    public String modifyOrderStatus(int id, Status status) {
-//        try {
-//            Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
-//
-//            order.setStatus(status);
-//
-//            orderRepository.save(order);
-//            return "Order status updated!";
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    public Order getOrderById(int id) {
-//        try {
-//            Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
-//
-//            return order;
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
 
+    public String cancelOrder(Long id) {
+        try {
+            if (!orderRepository.existsById(id)) {
+                return "Order not found";
+            }
+            orderRepository.deleteById(id);
+            return "Order cancelled successfully!";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public String modifyOrderStatus(Long id, Status status) {
+        try {
+            Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+
+            order.setStatus(status);
+
+            orderRepository.save(order);
+            return "Order status updated to " + status;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Order getOrderById(Long id) {
+        try {
+            Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+
+            return order;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String deleteAllOrders() {
+        try {
+            orderRepository.deleteAll();
+
+            return "All Orders deleted!";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String deleteOrder(Long id) {
+        try {
+            Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found to delete"));
+            orderRepository.delete(order);
+
+            return "Order deleted succesfully";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
