@@ -1,4 +1,5 @@
 package org.example.edi.tables;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,8 +12,8 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private Order order;
-
     private String sku;
     private int quantity;
     private int price;

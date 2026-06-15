@@ -1,4 +1,6 @@
 package org.example.edi.tables;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.example.edi.enums.Status;
 import jakarta.persistence.*;
 
