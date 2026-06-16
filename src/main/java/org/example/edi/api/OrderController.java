@@ -17,7 +17,7 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/")
+    @PostMapping("/createorder")
     public String createOrder(@RequestBody CreateOrderRequest request) {
         return orderService.createOrder(request);
     }
@@ -43,13 +43,13 @@ public class OrderController {
         return orderService.getOrderById(id);
     }
 
-    @DeleteMapping("/deleteallorders")
-    public String deleteAllOrders() {
-        return orderService.deleteAllOrders();
+    @DeleteMapping("/cancelallorders")
+    public String cancelAllOrders() {
+        return orderService.cancelAllOrders();
     }
 
-    @DeleteMapping("/deleteorder/{id}")
-    public String deleteOrder(@PathVariable Long id) {
-        return orderService.deleteOrder(id);
+    @DeleteMapping("/cancelorderbyitem/{id}/{sku}")
+    public String cancelOrderByItems(@PathVariable Long id, @PathVariable String sku) {
+        return orderService.cancelOrderByItems(id, sku);
     }
 }
