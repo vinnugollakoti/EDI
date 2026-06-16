@@ -29,59 +29,71 @@ public class InventoryService {
         }
     }
 
-    public String addAvailableQuantity(Long id, int quantity) {
+    public Inventory getInventory(Long id) {
         try {
-            Inventory inventory = inventoryrepository.findById(id).orElseThrow(() -> new RuntimeException("Inventory not found"));
+            return inventoryrepository.findById(id).orElseThrow(() -> new RuntimeException("Inventory not found"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Inventory getInventoryBySku(String sku) {
+        try {
+            return inventoryrepository.findBySku(sku).orElseThrow(() -> new RuntimeException("Inventory not found with that sku"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int manageAvailableQuantity(String sku, int quantity, boolean bool) {
+        try {
+            Inventory inventory = inventoryrepository.findBySku(sku).orElseThrow(() -> new RuntimeException("Inventory not found!"));
+
+            if(bool) {
+                inventory.setAvailableQuantity(inventory.getAvailableQuantity() + quantity);
+            } else {
+                inventory.setAvailableQuantity(inventory.getAvailableQuantity() - quantity);
+            }
+
+            inventoryrepository.save(inventory);
+
+            return inventory.getAvailableQuantity();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addAvailableQuantity(String sku, int quantity) {
+        try {
+            Inventory inventory = inventoryrepository.findBySku(sku).orElseThrow(() -> new RuntimeException("Inventory not found"));
             inventory.setAvailableQuantity(inventory.getAvailableQuantity() + quantity);
-
-            inventoryrepository.save(inventory);
-            return "Inventory added ";
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String addReservedQuantity(Long id, int quantity) {
-        try {
-            Inventory inventory = inventoryrepository.findById(id).orElseThrow(() -> new RuntimeException("Inventory not found"));
-
-            inventory.setReservedQuantity(inventory.getReservedQuantity() + quantity);
-
-            inventoryrepository.save(inventory);
-            return "Inventory updated successfully";
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String removeAvailableQuantity(Long id, int quantity) {
-        try {
-            Inventory inventory = inventoryrepository.findById(id).orElseThrow(() -> new RuntimeException("Inventory not found"));
-            inventory.setAvailableQuantity(inventory.getAvailableQuantity() - quantity);
-
-            inventoryrepository.save(inventory);
-            return "Inventory updated successfully";
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public String removeReservedQuantity(Long id, int quantity) {
-        try {
-            Inventory inventory = inventoryrepository.findById(id).orElseThrow(() -> new RuntimeException("Inventory not found"));
             inventory.setReservedQuantity(inventory.getReservedQuantity() - quantity);
 
             inventoryrepository.save(inventory);
-            return "Inventory updated successfully";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String deleteInventory(Long id) {
+
+    public void removeAvailableQuantity(String sku, int quantity) {
         try {
-            Inventory inventory = inventoryrepository.findById(id).orElseThrow(() -> new RuntimeException("Inventory not found"));
+            Inventory inventory = inventoryrepository.findBySku(sku).orElseThrow(() -> new RuntimeException("Inventory not found"));
+            inventory.setAvailableQuantity(inventory.getAvailableQuantity() - quantity);
+            inventory.setReservedQuantity(inventory.getReservedQuantity() + quantity);
+
+            inventoryrepository.save(inventory);
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public String deleteInventory(String sku) {
+        try {
+            Inventory inventory = inventoryrepository.findBySku(sku).orElseThrow(() -> new RuntimeException("Inventory not found"));
             inventoryrepository.delete(inventory);
 
             return "Inventory deleted successfully";
@@ -89,5 +101,4 @@ public class InventoryService {
             throw new RuntimeException(e);
         }
     }
-
 }
