@@ -2,6 +2,8 @@ package org.example.edi.services;
 import org.example.edi.dto.CreateOrderRequest;
 import org.example.edi.dto.OrderItemRequest;
 import org.example.edi.enums.Status;
+import org.example.edi.repository.InventoryRepository;
+import org.example.edi.repository.OrderItemRepository;
 import org.example.edi.repository.OrderRepository;
 import org.example.edi.tables.Order;
 import org.example.edi.tables.OrderItem;
@@ -10,14 +12,21 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final InventoryRepository inventoryRepository;
+    private final InventoryService inventoryService;
+    private final OrderItemRepository orderItemRepository;
 
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, InventoryRepository inventoryRepository, InventoryService inventoryService, OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.inventoryService = inventoryService;
+        this.orderItemRepository = orderItemRepository;
     }
 
     public String createOrder(CreateOrderRequest request) {
@@ -33,9 +42,19 @@ public class OrderService {
 
             OrderItem item = new OrderItem();
 
-            item.setSku(itemRequest.getSku());
-            item.setQuantity(itemRequest.getQuantity());
-            item.setPrice(itemRequest.getPrice());
+            String sku = itemRequest.getSku();
+            int quantity = itemRequest.getQuantity();
+            int price = itemRequest.getPrice();
+
+            if (!inventoryRepository.existsBySku(sku)) {
+                throw new IllegalArgumentException("SKU Not found");
+            }
+
+            inventoryService.removeAvailableQuantity(sku, quantity);
+
+            item.setSku(sku);
+            item.setQuantity(quantity);
+            item.setPrice(quantity);
 
             item.setOrder(order);
 
@@ -54,10 +73,35 @@ public class OrderService {
 
     public String cancelOrder(Long id) {
         try {
-            if (!orderRepository.existsById(id)) {
-                return "Order not found";
-            }
+            Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found to cancel"));
+
             orderRepository.deleteById(id);
+            return "Order cancelled successfully!";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String cancelOrderByItems(Long id, String sku) {
+        try {
+            Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found to cancel"));
+
+            List<OrderItem> items = order.getItems();
+
+            for (OrderItem item: items) {
+                if (Objects.equals(item.getSku(), sku)) {
+                    orderItemRepository.delete(item);
+                    items.remove(item);
+                    inventoryService.addAvailableQuantity(item.getSku(), item.getQuantity());
+                }
+            }
+
+            if (items.isEmpty()) {
+                orderRepository.delete(order);
+            }
+
+            orderRepository.save(order);
+
             return "Order cancelled successfully!";
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -79,30 +123,17 @@ public class OrderService {
 
     public Order getOrderById(Long id) {
         try {
-            Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
-
-            return order;
+            return orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String deleteAllOrders() {
+    public String cancelAllOrders() {
         try {
             orderRepository.deleteAll();
 
             return "All Orders deleted!";
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String deleteOrder(Long id) {
-        try {
-            Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found to delete"));
-            orderRepository.delete(order);
-
-            return "Order deleted succesfully";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
