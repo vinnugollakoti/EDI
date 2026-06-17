@@ -27,6 +27,12 @@ public class Order {
     )
     private List<OrderItem> items;
 
+    @OneToOne(
+            mappedBy = "order",
+            cascade = CascadeType.ALL
+    )
+    private Invoice invoice;
+
     public Order() {}
 
     public void setId(Long id) {
@@ -67,5 +73,13 @@ public class Order {
 
     public List<OrderItem> getItems() {
         return items;
+    }
+
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
+    }
+
+    public Invoice getInvoice() {
+        return invoice;
     }
 }

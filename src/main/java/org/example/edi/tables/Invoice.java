@@ -1,12 +1,22 @@
 package org.example.edi.tables;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "invoices")
 public class Invoice {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int invoiceNumber;
-    private Long orderId;
+
+
+    @OneToOne
+    @JsonIgnore
+    @JoinColumn(name = "order_id", nullable = false, unique = true)
+    private Order order;
     private int totalAmount;
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     public Invoice() {}
 
@@ -14,39 +24,32 @@ public class Invoice {
         this.id = id;
     }
 
-    public void setInvoiceNumber(int invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public Order getOrder() {
+        return order;
     }
 
     public void setTotalAmount(int totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
         return id;
     }
 
-    public int getInvoiceNumber() {
-        return invoiceNumber;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
     public int getTotalAmount() {
         return totalAmount;
     }
 
-    public String getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 }
