@@ -35,4 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
-.envrc
+.envrc*.hprof
+*.hprof
+java_pid92814.hprof
