@@ -21,12 +21,14 @@ public class OrderService {
     private final InventoryRepository inventoryRepository;
     private final InventoryService inventoryService;
     private final OrderItemRepository orderItemRepository;
+    private final InvoiceService invoiceService;
 
-    public OrderService(OrderRepository orderRepository, InventoryRepository inventoryRepository, InventoryService inventoryService, OrderItemRepository orderItemRepository) {
+    public OrderService(OrderRepository orderRepository, InventoryRepository inventoryRepository, InventoryService inventoryService, OrderItemRepository orderItemRepository, InvoiceService invoiceService) {
         this.orderRepository = orderRepository;
         this.inventoryRepository = inventoryRepository;
         this.inventoryService = inventoryService;
         this.orderItemRepository = orderItemRepository;
+        this.invoiceService = invoiceService;
     }
 
     public String createOrder(CreateOrderRequest request) {
@@ -37,6 +39,7 @@ public class OrderService {
         order.setCreatedAt(LocalDateTime.now());
 
         List<OrderItem> items = new ArrayList<>();
+        int totalAmount = 0;
 
         for (OrderItemRequest itemRequest: request.getItems()) {
 
@@ -54,16 +57,17 @@ public class OrderService {
 
             item.setSku(sku);
             item.setQuantity(quantity);
-            item.setPrice(quantity);
+            item.setPrice(price);
+            totalAmount += price;
 
             item.setOrder(order);
 
             items.add(item);
         }
-
         order.setItems(items);
-        orderRepository.save(order);
+        order.setInvoice(invoiceService.createInvoice(order, totalAmount));
 
+        orderRepository.save(order);
         return "Order Created Successfully!";
     }
 

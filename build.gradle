@@ -23,6 +23,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.postgresql:postgresql:42.7.7'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.apache.camel.springboot:camel-direct-starter:4.10.0'
 
 
     runtimeOnly 'org.postgresql:postgresql'
