@@ -1,4 +1,5 @@
 package org.example.edi.services;
+import org.apache.camel.ProducerTemplate;
 import org.example.edi.dto.CreateOrderRequest;
 import org.example.edi.dto.OrderItemRequest;
 import org.example.edi.enums.Status;
@@ -8,6 +9,8 @@ import org.example.edi.repository.OrderRepository;
 import org.example.edi.tables.Order;
 import org.example.edi.tables.OrderItem;
 import org.springframework.stereotype.Service;
+import org.springframework.kafka.core.KafkaTemplate;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +25,24 @@ public class OrderService {
     private final InventoryService inventoryService;
     private final OrderItemRepository orderItemRepository;
     private final InvoiceService invoiceService;
+//    private final ProducerTemplate producerTemplate;
 
-    public OrderService(OrderRepository orderRepository, InventoryRepository inventoryRepository, InventoryService inventoryService, OrderItemRepository orderItemRepository, InvoiceService invoiceService) {
+
+
+    public OrderService(
+            OrderRepository orderRepository,
+            InventoryRepository inventoryRepository,
+            InventoryService inventoryService,
+            OrderItemRepository orderItemRepository,
+            InvoiceService invoiceService
+//            ProducerTemplate producerTemplate
+    ) {
         this.orderRepository = orderRepository;
         this.inventoryRepository = inventoryRepository;
         this.inventoryService = inventoryService;
         this.orderItemRepository = orderItemRepository;
         this.invoiceService = invoiceService;
+//        this.producerTemplate = producerTemplate;
     }
 
     public String createOrder(CreateOrderRequest request) {
@@ -66,7 +80,6 @@ public class OrderService {
         }
         order.setItems(items);
         order.setInvoice(invoiceService.createInvoice(order, totalAmount));
-
         orderRepository.save(order);
         return "Order Created Successfully!";
     }
